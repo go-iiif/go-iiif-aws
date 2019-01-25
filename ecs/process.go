@@ -8,6 +8,7 @@ import (
 	aws_events "github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	aws_ecs "github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/whosonfirst/go-whosonfirst-aws/lambda"
 	"github.com/whosonfirst/go-whosonfirst-aws/session"
 	"log"
 	"mime"
@@ -158,6 +159,49 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 	}
 
 	return &task_rsp, nil
+}
+
+func InvokeLambdaHandlerFunc(opts *ProcessTaskOptions, lambda_dsn string, lambda_func string, lambda_type string) (interface{}, error) {
+
+	// https://github.com/aws/aws-lambda-go/blob/master/events/s3.go
+
+	svc, err := lambda.NewLambdaServiceWithDSN(lambda_dsn)
+
+	if err != nil {
+		return nil, err
+	}
+
+	s3_records := make([]aws_events.S3EventRecord, len(opts.URIs))
+
+	for i, u := range opts.URIs {
+
+		s3_object := aws_events.S3Object{
+			Key: u,
+		}
+
+		s3_entity := aws_events.S3Entity{
+			Object: s3_object,
+		}
+
+		s3_records[i] = aws_events.S3EventRecord{
+			S3: s3_entity,
+		}
+	}
+
+	s3_event := aws_events.S3Event{
+		Records: s3_records,
+	}
+
+	// THIS NEEDS BETTER RESPONSE WAH-WAH
+	// https://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#InvokeOutput
+
+	err = lambda.InvokeFunction(svc, lambda_func, lambda_type, s3_event)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
 }
 
 func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aws_events.S3Event) (*ProcessTaskResponse, error) {

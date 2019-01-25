@@ -4,9 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/aaronland/go-iiif-aws/ecs"
-	aws_events "github.com/aws/aws-lambda-go/events"
 	aws_lambda "github.com/aws/aws-lambda-go/lambda"
-	"github.com/whosonfirst/go-whosonfirst-aws/lambda"
 	"github.com/whosonfirst/go-whosonfirst-cli/flags"
 	"log"
 	"strings"
@@ -97,39 +95,7 @@ func main() {
 
 	case "invoke":
 
-		// https://github.com/aws/aws-lambda-go/blob/master/events/s3.go
-
-		svc, err := lambda.NewLambdaServiceWithDSN(*lambda_dsn)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		s3_records := make([]aws_events.S3EventRecord, len(uris))
-
-		for i, u := range uris {
-
-			s3_object := aws_events.S3Object{
-				Key: u,
-			}
-
-			s3_entity := aws_events.S3Entity{
-				Object: s3_object,
-			}
-
-			s3_records[i] = aws_events.S3EventRecord{
-				S3: s3_entity,
-			}
-		}
-
-		s3_event := aws_events.S3Event{
-			Records: s3_records,
-		}
-
-		// THIS NEEDS BETTER RESPONSE WAH-WAH
-		// https://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#InvokeOutput
-
-		err = lambda.InvokeFunction(svc, *lambda_func, *lambda_type, s3_event)
+		_, err := ecs.InvokeLambdaHandlerFunc(opts, *lambda_dsn, *lambda_func, *lambda_type)
 
 		if err != nil {
 			log.Fatal(err)
