@@ -2,11 +2,14 @@ package ecs
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	aws_events "github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	aws_ecs "github.com/aws/aws-sdk-go/service/ecs"
 	"github.com/whosonfirst/go-whosonfirst-aws/session"
+	"log"
 	"mime"
 	"path/filepath"
 	"strings"
@@ -155,4 +158,52 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 	}
 
 	return &task_rsp, nil
+}
+
+func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aws_events.S3Event) (*ProcessTaskResponse, error) {
+
+	handler := func(ctx context.Context, ev aws_events.S3Event) (*ProcessTaskResponse, error) {
+
+		uris := make([]string, 0)
+
+		for _, r := range ev.Records {
+
+			s3_entity := r.S3
+			s3_obj := s3_entity.Object
+			s3_key := s3_obj.Key
+
+			im_ext := filepath.Ext(s3_key)
+			im_type := mime.TypeByExtension(im_ext)
+
+			if !strings.HasPrefix(im_type, "image/") {
+				continue
+			}
+
+			uris = append(uris, s3_key)
+		}
+
+		if len(uris) == 0 {
+			return nil, nil
+		}
+
+		opts.URIs = uris
+
+		rsp, err := LaunchProcessTask(ctx, opts)
+
+		if err != nil {
+			return nil, err
+		}
+
+		enc_rsp, err := json.Marshal(rsp)
+
+		if err != nil {
+			return nil, err
+		}
+
+		log.Println(string(enc_rsp))
+
+		return rsp, nil
+	}
+
+	return handler
 }
