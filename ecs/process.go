@@ -133,6 +133,10 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 		return nil, err
 	}
 
+	// https://github.com/buildkite/ecs-run-task/blob/master/runner/runner.go#L148-L208
+	// this appears to be how you capture the output of an ECS task?
+	// (20190124/thisisaaronland)
+
 	task_id := rsp.Tasks[0].TaskArn
 
 	if opts.Wait {
