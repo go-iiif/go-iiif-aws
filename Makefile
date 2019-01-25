@@ -6,7 +6,8 @@ prep:
 
 self:   prep rmdeps
 	if test -d src; then rm -rf src; fi
-	mkdir -p src/github.com/sfomuseum/go-iiif-aws
+	mkdir -p src/github.com/aaronland/go-iiif-aws
+	cp -r ecs src/github.com/aaronland/go-iiif-aws/
 	cp -r vendor/* src/
 
 rmdeps:
@@ -29,8 +30,9 @@ vendor-deps: rmdeps deps
 	rm -rf src
 
 fmt:
-	# go fmt *.go
+	go fmt *.go
 	go fmt cmd/*.go
+	go fmt ecs/*.go
 
 bin: 	self
 	rm -rf bin/*
