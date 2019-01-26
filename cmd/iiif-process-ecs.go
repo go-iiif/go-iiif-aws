@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/aaronland/go-iiif-aws/ecs"
+	"github.com/aaronland/go-string/dsn"	
 	aws_lambda "github.com/aws/aws-lambda-go/lambda"
 	"github.com/whosonfirst/go-whosonfirst-cli/flags"
 	"log"
@@ -23,6 +24,9 @@ func main() {
 
 	var strip_paths = flag.Bool("strip-paths", true, "Strip directory tree from URIs.")
 	var wait = flag.Bool("wait", false, "Wait for the task to complete.")
+
+	var allow_extras = flag.Bool("allow-extra-flags", false, "Allow additional flags to be passed to (the container-ized) `iiif-process` tool. This flag is EXPERIMENTAL and may be removed.")
+	var str_extras = flag.String("extra-flags", "", "A DSN-encoded set of extra flags to be passed to (the container-ized) `iiif-process` tool. This flag is EXPERIMENTAL and may be removed.")
 
 	var mode = flag.String("mode", "task", "Valid modes are: lambda (run as a Lambda function), invoke (invoke this Lambda function), task (run this ECS task).")
 
@@ -84,6 +88,18 @@ func main() {
 		Config:         *config,
 		Instructions:   *instructions,
 		StripPaths:     *strip_paths,
+	}
+
+	if *allow_extras {
+
+		extras, err := dsn.StringToDSN(*str_extras)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		opts.AllowExtraFlags = true
+		opts.ExtraFlags = extras
 	}
 
 	switch *mode {

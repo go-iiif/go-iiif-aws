@@ -17,17 +17,22 @@ import (
 )
 
 type ProcessTaskOptions struct {
-	DSN            string
-	Task           string
-	Wait           bool
-	Cluster        string
-	Container      string
-	SecurityGroups []string
-	Subnets        []string
-	Config         string
-	Instructions   string
-	URIs           []string
-	StripPaths     bool
+	DSN             string
+	Task            string
+	Wait            bool
+	Cluster         string
+	Container       string
+	SecurityGroups  []string
+	Subnets         []string
+	Config          string
+	Instructions    string
+	URIs            []string
+	StripPaths      bool
+	
+	// EXPERIMENTAL... (20190125/thisisaaronland)
+	
+	AllowExtraFlags bool
+	ExtraFlags      map[string]string
 }
 
 type ProcessTaskResponse struct {
@@ -53,6 +58,16 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 		aws.String(opts.Config),
 		aws.String("-instructions"),
 		aws.String(opts.Instructions),
+	}
+
+	// EXPERIMENTAL... (20190125/thisisaaronland)
+	
+	if opts.AllowExtraFlags {
+
+		for k, v := range opts.ExtraFlags {
+			cmd = append(cmd, aws.String(k))
+			cmd = append(cmd, aws.String(v))
+		}
 	}
 
 	images := make([]string, 0)
@@ -82,6 +97,10 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 		cmd = append(cmd, aws.String("-uri"))
 		cmd = append(cmd, aws.String(im))
 	}
+
+	// at this point there's nothing IIIF specific about anything
+	// that follows - it's pretty much boilerplate AWS ECS invoking
+	// code
 
 	svc := aws_ecs.New(sess)
 
