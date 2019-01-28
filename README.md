@@ -233,7 +233,7 @@ Required keys in a `go-whosonfirst-aws` DSN string for Lambda services are:
 | --- | --- |
 | `iam:` | Assume that all credentials are handled by AWS IAM roles |
 | `env:` | Assume that all credentials are handler by AWS-specific environment variables |
-| `PATH:PROFILE | Assume that all credentials can be found in the `PROFILE` section of the ini-style config file `PATH` |
+| `PATH:PROFILE` | Assume that all credentials can be found in the `PROFILE` section of the ini-style config file `PATH` |
 | `PROFILE` | Assume that all credentials can be found in the `PROFILE` section of default AWS credentials file |
 
 ## Known-knowns
