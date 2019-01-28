@@ -78,7 +78,7 @@ And the following policies assigned to it:
 * `AmazonECSTaskExecutionRolePolicy`
 * A custom policy with the necessary permissions your task will need to read-from and write-to source and derivative caches (typically S3)
 
-The task should be run in `awsvpc` network mode and required the `FARGATE` capability.
+The task should be run in `awsvpc` network mode and require the `FARGATE` capability.
 
 ## Tools
 
@@ -148,7 +148,7 @@ Or, assuming you've installed this tool as a Lambda function (see below) and the
 $> iiif-process-ecs -mode invoke \
    -lambda-dsn 'region=us-east-1 credentials=session' \
    -lambda-func 'ProcessIIIF` \
-   -lambda-type 'FIX ME' \
+   -lambda-type 'RequestResponse' \
    -uri avocado.png \
    -uri toast.jpg 
 ```
