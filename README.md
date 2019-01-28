@@ -24,7 +24,6 @@ Build a Docker container with an up-to-date copy of the [iiif-process](https://g
 
 For example:
 
-
 ```
 $> make docker-process CONFIG=/usr/local/my-go-iiif-config.json INSTRUCTIONS=/usr/local/my-go-iiif-instructions.json
 time passes...
@@ -98,11 +97,11 @@ Usage of ./bin/iiif-process-ecs:
   -container string
     	The name of your AWS ECS container.
   -ecs-dsn string
-    	A valid ECS DSN.
+    	A valid (go-whosonfirst-aws) ECS DSN.
   -instructions string
     	The path your IIIF processing instructions (on/in your container). (default "/etc/go-iiif/instructions.json")
   -lambda-dsn string
-    	A valid Lambda DSN. Required if -mode is "invoke".
+    	A valid (go-whosonfirst-aws) Lambda DSN. Required if -mode is "invoke".
   -lambda-func string
     	A valid Lambda function name. Required if -mode is "invoke".
   -lambda-type string
@@ -209,6 +208,38 @@ You'll need to make sure the role associated with your Lambda function has the f
     ]
 }
 ```
+
+## go-whosonfirst-aws DSNs
+
+`go-whosonfirst-aws` DSNs are strings with one or more `key=value` pairs separated by a space.
+
+### ecs-dsn
+
+Required keys in a `go-whosonfirst-aws` DSN string for ECS services are:
+
+* `region=AWS_REGION`
+* `credentials=CREDENTIALS`
+
+### lambda-dsn
+
+Required keys in a `go-whosonfirst-aws` DSN string for Lambda services are:
+
+* `region=AWS_REGION`
+* `credentials=CREDENTIALS`
+
+### credentials
+
+| Value | Description |
+| --- | --- |
+| `iam:` | Assume that all credentials are handled by AWS IAM roles |
+| `env:` | Assume that all credentials are handler by AWS-specific environment variables |
+| `PATH:PROFILE | Assume that all credentials can be found in the `PROFILE` section of the ini-style config file `PATH` |
+| `PROFILE` | Assume that all credentials can be found in the `PROFILE` section of default AWS credentials file |
+
+## Known-knowns
+
+* The output of the `iiif-process` itself is not returned when `iiif-process-ecs` is invoked on the command-line. This will be fixed soon, hopefully.
+* If you invoke `iiif-process-ecs` with `-mode invoke` (meaning you're invoking a Lambda function which will invoke your ECS task) _and_ pass the `-wait` flag (meaning you want to wait until the ECS process completes) then my experience has been the Lambda function will fail. Specifically the ECS task will complete but Lambda won't be signaled accordingly (by the `ecs.WaitUntilTasksStopped`). I'm not sure what's going on here...
 
 ## See also
 
