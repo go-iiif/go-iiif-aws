@@ -20,14 +20,35 @@ If you're reading this it means that the documentation is still being finalized.
 
 ### go-iiif-process-ecs
 
+Build a Docker container with an up-to-date copy of the `iiif-process` tool bundled with custom IIIF config and (processing) instructions file. The easiest way to build this container is to use the `docker-process` Makefile target passing the paths to your custom IIIF config and instructions files.
+
+For example:
+
 
 ```
-make docker CONFIG=/usr/local/my-go-iiif-config.json INSTRUCTIONS=/usr/local/my-go-iiif-instructions.json
+$> make docker-process CONFIG=/usr/local/my-go-iiif-config.json INSTRUCTIONS=/usr/local/my-go-iiif-instructions.json
+time passes...
+
+$> docker run go-iiif-process-ecs /bin/iiif-process -h
+Usage of /bin/iiif-process:
+  -config string
+    	Path to a valid go-iiif config file.
+  -instructions string
+    	Path to a valid go-iiif processing instructions file.
+  -report
+    	Store a process report (JSON) for each URI in the cache tree.
+  -report-name string
+    	The filename for process reports. Default is 'process.json' as in '${URI}/process.json'. (default "process.json")
+  -uri value
+    	One or more valid IIIF URIs.
+
+$> docker run go-iiif-process-ecs ls -al /etc/go-iiif/config.json
+-rw-r--r--    1 root     root          1033 Jan 28 20:03 /etc/go-iiif/config.json
 ```
 
 ### ECS
 
-...
+At this point you will need to push the your `go-iiif-process-ecs` container to your AWS EC2 repository.
 
 ## Tools
 
@@ -35,11 +56,7 @@ make docker CONFIG=/usr/local/my-go-iiif-config.json INSTRUCTIONS=/usr/local/my-
 
 ![](docs/process-arch.jpg)
 
-Command line tool for working with the `go-iiif-process-ecs` -tagged Docker container (see above). It can be:
-
-* Used to invoke a `iiif-process` task directly from the command-line, passing in one or more URIs to process.
-* Bundled as an AWS Lambda function that can be run to invoke your task.
-* Used to invoke that Lambda function (to invoke your task) from the command-line.
+Command line tool for working with the `go-iiif-process-ecs` -tagged Docker container (see above). 
 
 ```
 $> ./bin/iiif-process-ecs -h
@@ -75,6 +92,12 @@ Usage of ./bin/iiif-process-ecs:
   -wait
     	Wait for the task to complete.
 ```
+
+It can be:
+
+* Used to invoke a `iiif-process` task directly from the command-line, passing in one or more URIs to process.
+* Bundled as an AWS Lambda function that can be run to invoke your task.
+* Used to invoke that Lambda function (to invoke your task) from the command-line.
 
 For example, if you just want to run the ECS task from the command-line:
 

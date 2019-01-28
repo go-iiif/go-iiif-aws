@@ -38,7 +38,7 @@ bin: 	self
 	rm -rf bin/*
 	@GOPATH=$(GOPATH) go build -o bin/iiif-process-ecs cmd/iiif-process-ecs.go
 
-docker:
+docker-process:
 	if test ! -f $(CONFIG); then echo "missing config file" && exit 1; fi
 	if test ! -f $(INSTRUCTIONS); then echo "missing instructions file" && exit 1; fi
 	if test -d tmp; then rm -rf tmp; fi
