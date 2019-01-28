@@ -2,8 +2,6 @@
 
 Go package for using go-iiif in AWS.
 
-![](docs/process-arch.jpg)
-
 ## Install
 
 You will need to have both `Go` (specifically a version of Go more recent than 1.7 so let's just assume you need [Go 1.11](https://golang.org/dl/) or higher) and the `make` programs installed on your computer. Assuming you do just type:
@@ -32,6 +30,8 @@ make docker CONFIG=/usr/local/my-go-iiif-config.json INSTRUCTIONS=/usr/local/my-
 ...
 
 ## Tools
+
+![](docs/process-arch.jpg)
 
 ### iiif-process-ecs
 
