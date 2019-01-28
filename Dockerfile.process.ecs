@@ -30,7 +30,9 @@ RUN apk update && apk upgrade && apk add \
 
 FROM alpine
 
-ARG GO_IIIF_VERSION=1.1.4
+# where "latest" means >= go-iiif 1.5
+
+ARG GO_IIIF_VERSION=latest
 ARG GO_IIIF_CONFIG=config.json
 ARG GO_IIIF_INSTRUCTIONS=instructions.json
 

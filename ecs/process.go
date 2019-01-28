@@ -17,22 +17,17 @@ import (
 )
 
 type ProcessTaskOptions struct {
-	DSN             string
-	Task            string
-	Wait            bool
-	Cluster         string
-	Container       string
-	SecurityGroups  []string
-	Subnets         []string
-	Config          string
-	Instructions    string
-	URIs            []string
-	StripPaths      bool
-	
-	// EXPERIMENTAL... (20190125/thisisaaronland)
-	
-	AllowExtraFlags bool
-	ExtraFlags      map[string]string
+	DSN            string
+	Task           string
+	Wait           bool
+	Cluster        string
+	Container      string
+	SecurityGroups []string
+	Subnets        []string
+	Config         string
+	Instructions   string
+	URIs           []string
+	StripPaths     bool
 }
 
 type ProcessTaskResponse struct {
@@ -58,16 +53,6 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 		aws.String(opts.Config),
 		aws.String("-instructions"),
 		aws.String(opts.Instructions),
-	}
-
-	// EXPERIMENTAL... (20190125/thisisaaronland)
-	
-	if opts.AllowExtraFlags {
-
-		for k, v := range opts.ExtraFlags {
-			cmd = append(cmd, aws.String(k))
-			cmd = append(cmd, aws.String(v))
-		}
 	}
 
 	images := make([]string, 0)

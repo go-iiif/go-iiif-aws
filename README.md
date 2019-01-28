@@ -1,5 +1,7 @@
 # go-iiif-aws
 
+![](docs/process-arch.jpg)
+
 Go package for using go-iiif in AWS.
 
 ## Install
@@ -14,7 +16,7 @@ All of this package's dependencies are bundled with the code in the `vendor` dir
 
 ## Important
 
-This is work in progress. You're welcome to play along but things may change, without warning, until otherwise noted.
+If you're reading this it means that the documentation is still being finalized.
 
 ## Docker
 

@@ -17,7 +17,6 @@ build:	fmt bin
 
 deps:
 	# @GOPATH=$(GOPATH) go get -u "github.com/aaronland/go-iiif"
-	@GOPATH=$(GOPATH) go get -u "github.com/aaronland/go-string"
 	@GOPATH=$(GOPATH) go get -u "github.com/aws/aws-lambda-go/lambda"
 	@GOPATH=$(GOPATH) go get -u "github.com/whosonfirst/go-whosonfirst-aws"
 	@GOPATH=$(GOPATH) go get -u "github.com/whosonfirst/go-whosonfirst-cli"
