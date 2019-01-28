@@ -1,8 +1,8 @@
 # go-iiif-aws
 
-![](docs/process-arch.jpg)
-
 Go package for using go-iiif in AWS.
+
+![](docs/process-arch.jpg)
 
 ## Install
 
@@ -142,3 +142,4 @@ You'll need to make sure the role associated with your Lambda function has the f
 ## See also
 
 * https://github.com/aaronland/go-iiif
+* https://github.com/awslabs/aws-lambda-container-image-converter/
