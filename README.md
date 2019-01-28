@@ -48,7 +48,37 @@ $> docker run go-iiif-process-ecs ls -al /etc/go-iiif/config.json
 
 ### ECS
 
-At this point you will need to push the your `go-iiif-process-ecs` container to your AWS EC2 repository.
+At this point you will need to push the your `go-iiif-process-ecs` container to your AWS ECS repository. The intracasies of setting up ECS are outside the scope of this document but Remy Dewolf's [AWS Fargate: First hands-on experience and review](https://medium.com/@remy.dewolf/aws-fargate-first-hands-on-experience-and-review-1b52fca2148e) is a pretty good introduction.
+
+#### Clusters
+
+There isn't really anything of note when configuring a `iiif-process-ecs` cluster. Services and tasks in this cluster are meant to be invoked atomically so there is no need to configure any persistent or long-running processes.
+
+#### Services
+
+You should ensure the following properties when configuring a `iiif-process-ecs` service.
+
+| Property | Value |
+| --- | --- |
+| Service Type | `REPLICA` |
+| Launch Type | `FARGATE` |
+| Service Role | `AWSServiceRoleForECS` |
+| Auto-assign public IP | `ENABLED` |
+
+The details of subnets and security groups for your `iiif-process-ecs` service are left to you but it is important that whatever security group you implement has access to the external internet (`0.0.0.0/0`).
+
+#### Task definitions
+
+Your `iiif-process-ecs` task definition will need a suitable AWS IAM role with the following properties:
+
+* A trust definition with `ecs-tasks.amazonaws.com`
+
+And the following policies assigned to it:
+
+* `AmazonECSTaskExecutionRolePolicy`
+* A custom policy with the necessary permissions your task will need to read-from and write-to source and derivative caches (typically S3)
+
+The task should be run in `awsvpc` network mode and required the `FARGATE` capability.
 
 ## Tools
 
