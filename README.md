@@ -18,7 +18,7 @@ If you're reading this it means that the documentation is still being finalized.
 
 ## Docker
 
-...
+### go-iiif-process-ecs
 
 
 ```
@@ -31,9 +31,15 @@ make docker CONFIG=/usr/local/my-go-iiif-config.json INSTRUCTIONS=/usr/local/my-
 
 ## Tools
 
+### iiif-process-ecs
+
 ![](docs/process-arch.jpg)
 
-### iiif-process-ecs
+Command line tool for working with the `go-iiif-process-ecs` -tagged Docker container (see above). It can be:
+
+* Used to invoke a `iiif-process` task directly from the command-line, passing in one or more URIs to process.
+* Bundled as an AWS Lambda function that can be run to invoke your task.
+* Used to invoke that Lambda function (to invoke your task) from the command-line.
 
 ```
 $> ./bin/iiif-process-ecs -h
@@ -73,13 +79,25 @@ Usage of ./bin/iiif-process-ecs:
 For example, if you just want to run the ECS task from the command-line:
 
 ```
-...
+$> iiif-process-ecs -mode task \
+   -ecs-dsn 'region=us-east-1 credentials=session' \
+   -subnet subnet-1234 \
+   -security-group sg-5678 \
+   -cluster iiif-process -container iiif-process \
+   -task iiif-process:1 \
+   -uri avocado.png \
+   -uri toast.jpg 
 ```
 
 Or, assuming you've installed this tool as a Lambda function (see below) and then want to _invoke_ that Lambda function from the command-line:
 
 ```
-...
+$> iiif-process-ecs -mode invoke \
+   -lambda-dsn 'region=us-east-1 credentials=session' \
+   -lambda-func 'ProcessIIIF` \
+   -lambda-type 'FIX ME' \
+   -uri avocado.png \
+   -uri toast.jpg 
 ```
 
 ### Running `iiif-process-ecs` as a Lambda function
