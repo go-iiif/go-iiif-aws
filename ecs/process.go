@@ -83,6 +83,14 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 		cmd = append(cmd, aws.String(uri))
 	}
 
+	str_cmd := make([]string, len(cmd))
+
+	for i, s := range cmd {
+		str_cmd[i] = *s
+	}
+
+	log.Println(strings.Join(str_cmd, " "))
+
 	// at this point there's nothing IIIF specific about anything
 	// that follows - it's pretty much boilerplate AWS ECS invoking
 	// code
@@ -223,7 +231,7 @@ func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aw
 
 			// HEY LOOK! PLEASE SUPPORT OTHER KINDS OF URIS
 			// ...BUT HOW? (20190130/thisisaaronland)
-			
+
 			im, err := process.NewIIIFURI(s3_key)
 
 			if err != nil {
