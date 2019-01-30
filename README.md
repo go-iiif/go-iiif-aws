@@ -49,26 +49,30 @@ $> docker run go-iiif-process-ecs ls -al /etc/go-iiif/config.json
 
 At this point you will need to push the your `go-iiif-process-ecs` container to your AWS ECS repository. The intracasies of setting up ECS are outside the scope of this document but Remy Dewolf's [AWS Fargate: First hands-on experience and review](https://medium.com/@remy.dewolf/aws-fargate-first-hands-on-experience-and-review-1b52fca2148e) is a pretty good introduction.
 
-#### Clusters
+What follows is a good faith to explain all the steps. I still find setting up ECS services confusing. In the examples that follow everything is called `go-iiif-process-ecs` but you can call things whatever you want.
 
-There isn't really anything of note when configuring a `iiif-process-ecs` cluster. Services and tasks in this cluster are meant to be invoked atomically so there is no need to configure any persistent or long-running processes.
+#### Docker
 
-#### Services
+```
+make docker-process CONFIG=config/config.json INSTRUCTIONS=config/instructions.json
+```
 
-You should ensure the following properties when configuring a `iiif-process-ecs` service.
+This will create a new Docker image called `go-iiif-process-ecs`.
 
-| Property | Value |
-| --- | --- |
-| Service Type | `REPLICA` |
-| Launch Type | `FARGATE` |
-| Service Role | `AWSServiceRoleForECS` |
-| Auto-assign public IP | `ENABLED` |
+#### Repository
 
-The details of subnets and security groups for your `iiif-process-ecs` service are left to you but it is important that whatever security group you implement has access to the external internet (`0.0.0.0/0`).
+Create a new ECS repository called `go-iiif-process-ecs`
+
+```
+docker tag go-iiif-process-ecs:latest {AWS_ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/go-iiif-process-ecs:0.0.1
+docker push {AWS_ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/go-iiif-process-ecs:0.0.1
+```
 
 #### Task definitions
 
-Your `iiif-process-ecs` task definition will need a suitable AWS IAM role with the following properties:
+Create a new task definition called `go-iiif-process-ecs`.
+
+Your task definition will need a suitable AWS IAM role with the following properties:
 
 * A trust definition with `ecs-tasks.amazonaws.com`
 
@@ -78,6 +82,33 @@ And the following policies assigned to it:
 * A custom policy with the necessary permissions your task will need to read-from and write-to source and derivative caches (typically S3)
 
 The task should be run in `awsvpc` network mode and require the `FARGATE` capability.
+
+##### Container definition (for your task definition)
+
+Add a container called `go-iiif-process-ecs` and set the image to be`{AWS_ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/go-iiif-process-ecs:0.0.1`.
+
+Configure the container limits, and other settings, as necessary. By default you shouldn't need to do anything besides specifying the image.
+
+#### Clusters
+
+Create a "Network only" cluster called `go-iiif-process-ecs`.
+
+There isn't really anything of note when configuring a `iiif-process-ecs` cluster. Services and tasks in this cluster are meant to be invoked atomically so there is no need to configure any persistent or long-running processes.
+
+#### Services
+
+Inside your cluster create a new service called `go-iiif-process-ecs`.
+
+You should ensure the following properties when configuring a `go-iiif-process-ecs` service.
+
+| Property | Value |
+| --- | --- |
+| Service Type | `REPLICA` |
+| Launch Type | `FARGATE` |
+| Service Role | `AWSServiceRoleForECS` |
+| Auto-assign public IP | `ENABLED` |
+
+The details of subnets and security groups for your `go-iiif-process-ecs` service are left to you but it is important that whatever security group you implement has access to the external internet (`0.0.0.0/0`).
 
 ## Tools
 
@@ -132,11 +163,11 @@ For example, if you just want to run the ECS task from the command-line:
 
 ```
 $> iiif-process-ecs -mode task \
-   -ecs-dsn 'region=us-east-1 credentials=session' \
-   -subnet subnet-1234 \
-   -security-group sg-5678 \
-   -cluster iiif-process -container iiif-process \
-   -task iiif-process:1 \
+   -ecs-dsn 'region={AWS_REGION} credentials={AWS_PROFILE}' \
+   -subnet {SUBNET} \
+   -security-group {AWS_SECURITY_GROUP} \
+   -cluster go-iiif-process-ecs -container go-iiif-process-ecs \
+   -task go-iiif-process-ecs:1 \
    -uri avocado.png \
    -uri toast.jpg 
 ```
@@ -145,7 +176,7 @@ Or, assuming you've installed this tool as a Lambda function (see below) and the
 
 ```
 $> iiif-process-ecs -mode invoke \
-   -lambda-dsn 'region=us-east-1 credentials=session' \
+   -lambda-dsn 'region={AWS_REGION} credentials={AWS_PROFILE}' \
    -lambda-func 'ProcessIIIF` \
    -lambda-type 'RequestResponse' \
    -uri avocado.png \
