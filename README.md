@@ -200,6 +200,8 @@ $> iiif-process-ecs -mode invoke \
 
 ### Running `iiif-process-ecs` as a Lambda function
 
+_If you're reading this building Lambda functions is currently broken._
+
 This assumes you've already set up your ECS task, which is outside the scope of this documentation.
 
 First run the handy `lambda-process` target in the Makefile:
