@@ -78,9 +78,8 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 	}
 
 	for _, im := range images {
-		uri := fmt.Sprintf("\"%s\"", im)
 		cmd = append(cmd, aws.String("-uri"))
-		cmd = append(cmd, aws.String(uri))
+		cmd = append(cmd, aws.String(im))
 	}
 
 	str_cmd := make([]string, len(cmd))
