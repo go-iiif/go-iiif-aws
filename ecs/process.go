@@ -82,6 +82,7 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 		cmd = append(cmd, aws.String(im))
 	}
 
+	/*
 	str_cmd := make([]string, len(cmd))
 
 	for i, s := range cmd {
@@ -89,7 +90,8 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 	}
 
 	log.Println(strings.Join(str_cmd, " "))
-
+	*/
+	
 	// at this point there's nothing IIIF specific about anything
 	// that follows - it's pretty much boilerplate AWS ECS invoking
 	// code
