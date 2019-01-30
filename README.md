@@ -172,9 +172,16 @@ $> iiif-process-ecs -mode task \
    -security-group {AWS_SECURITY_GROUP} \
    -cluster go-iiif-process-ecs -container go-iiif-process-ecs \
    -task go-iiif-process-ecs:1 \
-   -uri avocado.png \
-   -uri toast.jpg 
+   -uri IMG_0084.JPG
 ```
+
+Assuming everything is configured properly you should see something like this:
+
+```
+2019/01/30 15:30:01 arn:aws:ecs:{AWS_REGION}:{AWS_ACCOUNT_ID}:task/{ECS_TASK_ID}
+```
+
+One of the known-knowns about this code base is that it's still clear how or whether its possible to capture the output of a container/task. It's not clear to me that it's possible without a lot of extra code to poll and parse CloudWatch logs. If your task completed successfully you will eventually see something like the following in CloudWatch:
 
 ![](docs/go-iif-aws-process.png)
 
