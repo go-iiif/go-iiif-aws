@@ -23,6 +23,7 @@ deps:
 	mkdir -p src/github.com/thisisaaronland
 	mv src/github.com/aaronland/go-iiif src/github.com/thisisaaronland/
 	mv src/github.com/whosonfirst/go-whosonfirst-aws/vendor/github.com/aws/aws-sdk-go src/github.com/aws/
+	rm -rf src/github.com/thisisaaronland/go-iiif/vendor/github.com/whosonfirst/go-whosonfirst-aws/vendor/github.com/aws
 
 vendor-deps: rmdeps deps
 	if test ! -d vendor; then mkdir vendor; fi
