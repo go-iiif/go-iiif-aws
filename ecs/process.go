@@ -200,16 +200,13 @@ func InvokeLambdaHandlerFunc(opts *ProcessTaskOptions, lambda_dsn string, lambda
 		Records: s3_records,
 	}
 
-	// THIS NEEDS BETTER RESPONSE WAH-WAH
-	// https://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#InvokeOutput
-
-	err = lambda.InvokeFunction(svc, lambda_func, lambda_type, s3_event)
+	rsp, err := lambda.InvokeFunction(svc, lambda_func, lambda_type, s3_event)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return rsp, nil
 }
 
 func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aws_events.S3Event) (*ProcessTaskResponse, error) {
