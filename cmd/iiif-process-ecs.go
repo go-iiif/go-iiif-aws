@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/aaronland/go-iiif-aws/ecs"
 	aws_lambda "github.com/aws/aws-lambda-go/lambda"
+	"github.com/thisisaaronland/go-iiif/process"
 	"github.com/whosonfirst/go-whosonfirst-cli/flags"
 	"log"
 	"strings"
@@ -21,7 +22,6 @@ func main() {
 	var config = flag.String("config", "/etc/go-iiif/config.json", "The path your IIIF config (on/in your container).")
 	var instructions = flag.String("instructions", "/etc/go-iiif/instructions.json", "The path your IIIF processing instructions (on/in your container).")
 
-	var strip_paths = flag.Bool("strip-paths", true, "Strip directory tree from URIs.")
 	var wait = flag.Bool("wait", false, "Wait for the task to complete.")
 
 	var mode = flag.String("mode", "task", "Valid modes are: lambda (run as a Lambda function), invoke (invoke this Lambda function), task (run this ECS task).")
@@ -36,8 +36,8 @@ func main() {
 	var security_groups flags.MultiString
 	flag.Var(&security_groups, "security-group", "One of more AWS security groups your task will assume.")
 
-	var uris flags.MultiString
-	flag.Var(&uris, "uri", "One or more valid IIIF URIs.")
+	var str_uris flags.MultiString
+	flag.Var(&str_uris, "uri", "One or more valid IIIF URIs.")
 
 	flag.Parse()
 
@@ -45,6 +45,19 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	uris := make([]process.URI, len(str_uris))
+
+	for i, u := range str_uris {
+
+		iiif_uri, err := process.NewIIIFURI(u)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		uris[i] = iiif_uri
 	}
 
 	if *mode == "lambda" {
@@ -67,7 +80,6 @@ func main() {
 			return expanded
 		}
 
-		uris = expand(uris, ",")
 		subnets = expand(subnets, ",")
 		security_groups = expand(security_groups, ",")
 	}
@@ -83,7 +95,6 @@ func main() {
 		URIs:           uris,
 		Config:         *config,
 		Instructions:   *instructions,
-		StripPaths:     *strip_paths,
 	}
 
 	switch *mode {

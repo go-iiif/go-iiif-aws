@@ -8,6 +8,7 @@ import (
 	aws_events "github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	aws_ecs "github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/thisisaaronland/go-iiif/process"
 	"github.com/whosonfirst/go-whosonfirst-aws/lambda"
 	"github.com/whosonfirst/go-whosonfirst-aws/session"
 	"log"
@@ -26,13 +27,12 @@ type ProcessTaskOptions struct {
 	Subnets        []string
 	Config         string
 	Instructions   string
-	URIs           []string
-	StripPaths     bool
+	URIs           []process.URI
 }
 
 type ProcessTaskResponse struct {
 	TaskId string
-	URIs   []string
+	URIs   []process.URI
 }
 
 func (t *ProcessTaskResponse) String() string {
@@ -59,19 +59,18 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 
 	for _, im := range opts.URIs {
 
-		if opts.StripPaths {
-			im = filepath.Base(im)
-		}
+		url := im.URL()
 
-		im_ext := filepath.Ext(im)
-		im_type := mime.TypeByExtension(im_ext)
+		url_base := filepath.Base(url)
+		url_ext := filepath.Ext(url_base)
+		url_type := mime.TypeByExtension(url_ext)
 
-		if !strings.HasPrefix(im_type, "image/") {
-			msg := fmt.Sprintf("%s has unknown or invalid mime-type %s", im, im_type)
+		if !strings.HasPrefix(url_type, "image/") {
+			msg := fmt.Sprintf("%s has unknown or invalid mime-type %s", url, url_type)
 			return nil, errors.New(msg)
 		}
 
-		images = append(images, im)
+		images = append(images, im.String())
 	}
 
 	if len(images) == 0 {
@@ -79,8 +78,9 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 	}
 
 	for _, im := range images {
+		uri := fmt.Sprintf("\"%s\"", im)
 		cmd = append(cmd, aws.String("-uri"))
-		cmd = append(cmd, aws.String(im))
+		cmd = append(cmd, aws.String(uri))
 	}
 
 	// at this point there's nothing IIIF specific about anything
@@ -184,7 +184,7 @@ func InvokeLambdaHandlerFunc(opts *ProcessTaskOptions, lambda_dsn string, lambda
 	for i, u := range opts.URIs {
 
 		s3_object := aws_events.S3Object{
-			Key: u,
+			Key: u.String(),
 		}
 
 		s3_entity := aws_events.S3Entity{
@@ -213,7 +213,7 @@ func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aw
 
 	handler := func(ctx context.Context, ev aws_events.S3Event) (*ProcessTaskResponse, error) {
 
-		uris := make([]string, 0)
+		uris := make([]process.URI, 0)
 
 		for _, r := range ev.Records {
 
@@ -221,14 +221,25 @@ func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aw
 			s3_obj := s3_entity.Object
 			s3_key := s3_obj.Key
 
-			im_ext := filepath.Ext(s3_key)
-			im_type := mime.TypeByExtension(im_ext)
+			// HEY LOOK! PLEASE SUPPORT OTHER KINDS OF URIS
+			// ...BUT HOW? (20190130/thisisaaronland)
+			
+			im, err := process.NewIIIFURI(s3_key)
 
-			if !strings.HasPrefix(im_type, "image/") {
+			if err != nil {
+				return nil, err
+			}
+
+			url := im.URL()
+
+			url_ext := filepath.Ext(url)
+			url_type := mime.TypeByExtension(url_ext)
+
+			if !strings.HasPrefix(url_type, "image/") {
 				continue
 			}
 
-			uris = append(uris, s3_key)
+			uris = append(uris, im)
 		}
 
 		if len(uris) == 0 {

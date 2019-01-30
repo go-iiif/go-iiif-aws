@@ -8,5 +8,4 @@ bin
 *.json
 !data/*.json
 *.csv
-go-iiif
 tmp
