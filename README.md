@@ -53,8 +53,10 @@ What follows is a good faith to explain all the steps. I still find setting up E
 
 #### Docker
 
+The first thing you need to do is bake a Docker container that contains your IIIF config and instructions file. The easiest thing is to use the handy `docker-process` Makefile target, specifying the path to your config files. For example:
+
 ```
-make docker-process CONFIG=config/config.json INSTRUCTIONS=config/instructions.json
+make docker-process CONFIG=/path/to/your/config.json INSTRUCTIONS=/path/to/your/instructions.json
 ```
 
 This will create a new Docker image called `go-iiif-process-ecs`.
@@ -159,11 +161,13 @@ It can be:
 * Bundled as an AWS Lambda function that can be run to invoke your task.
 * Used to invoke that Lambda function (to invoke your task) from the command-line.
 
+#### -mode task
+
 For example, if you just want to run the ECS task from the command-line:
 
 ```
 $> iiif-process-ecs -mode task \
-   -ecs-dsn 'region={AWS_REGION} credentials={AWS_PROFILE}' \
+   -ecs-dsn 'region={AWS_REGION} credentials={AWS_CREDENTIALS}' \
    -subnet {SUBNET} \
    -security-group {AWS_SECURITY_GROUP} \
    -cluster go-iiif-process-ecs -container go-iiif-process-ecs \
@@ -172,11 +176,15 @@ $> iiif-process-ecs -mode task \
    -uri toast.jpg 
 ```
 
-Or, assuming you've installed this tool as a Lambda function (see below) and then want to _invoke_ that Lambda function from the command-line:
+![](docs/go-iif-aws-process.png)
+
+#### -mode invoke
+
+If you've installed this tool as a Lambda function (see below) and then want to _invoke_ that Lambda function from the command-line:
 
 ```
 $> iiif-process-ecs -mode invoke \
-   -lambda-dsn 'region={AWS_REGION} credentials={AWS_PROFILE}' \
+   -lambda-dsn 'region={AWS_REGION} credentials={AWS_CREDENTIALS}' \
    -lambda-func 'ProcessIIIF` \
    -lambda-type 'RequestResponse' \
    -uri avocado.png \
