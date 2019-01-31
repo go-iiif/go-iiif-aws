@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/aaronland/go-iiif-uri"
 	aws_events "github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	aws_ecs "github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/go-iiif/go-iiif-uri"
 	"github.com/whosonfirst/go-whosonfirst-aws/lambda"
 	"github.com/whosonfirst/go-whosonfirst-aws/session"
 	"log"
@@ -28,7 +28,7 @@ type ProcessTaskOptions struct {
 	Config         string
 	Instructions   string
 	URIs           []uri.URI
-	URIType	string
+	URIType        string
 }
 
 type ProcessTaskResponse struct {

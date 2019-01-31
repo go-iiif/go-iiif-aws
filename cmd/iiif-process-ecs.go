@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/aaronland/go-iiif-aws/ecs"
-	"github.com/aaronland/go-iiif-uri"
 	aws_lambda "github.com/aws/aws-lambda-go/lambda"
+	"github.com/go-iiif/go-iiif-aws/ecs"
+	"github.com/go-iiif/go-iiif-uri"
 	"github.com/whosonfirst/go-whosonfirst-cli/flags"
 	"log"
 	"strings"
@@ -40,7 +40,7 @@ func main() {
 	flag.Var(&str_uris, "uri", "One or more valid IIIF URIs.")
 
 	var uri_type = flag.String("uri-type", "string", "A valid (go-iiif-uri) URI type. Valid options are: string, idsecret")
-	
+
 	flag.Parse()
 
 	err := flags.SetFlagsFromEnvVars("IIIF_PROCESS")
@@ -97,7 +97,7 @@ func main() {
 		Config:         *config,
 		Instructions:   *instructions,
 		URIs:           uris,
-		URIType:	*uri_type,
+		URIType:        *uri_type,
 	}
 
 	switch *mode {
@@ -116,7 +116,7 @@ func main() {
 		}
 
 		log.Println(rsp)
-		
+
 	case "task":
 
 		ctx, cancel := context.WithCancel(context.Background())

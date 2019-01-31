@@ -6,8 +6,8 @@ prep:
 
 self:   prep rmdeps
 	if test -d src; then rm -rf src; fi
-	mkdir -p src/github.com/aaronland/go-iiif-aws
-	cp -r ecs src/github.com/aaronland/go-iiif-aws/
+	mkdir -p src/github.com/go-iiif/go-iiif-aws
+	cp -r ecs src/github.com/go-iiif/go-iiif-aws/
 	cp -r vendor/* src/
 
 rmdeps:
@@ -16,7 +16,7 @@ rmdeps:
 build:	fmt bin
 
 deps:
-	@GOPATH=$(GOPATH) go get -u "github.com/aaronland/go-iiif-uri"
+	@GOPATH=$(GOPATH) go get -u "github.com/go-iiif/go-iiif-uri"
 	@GOPATH=$(GOPATH) go get -u "github.com/aws/aws-lambda-go/lambda"
 	@GOPATH=$(GOPATH) go get -u "github.com/whosonfirst/go-whosonfirst-aws"
 	@GOPATH=$(GOPATH) go get -u "github.com/whosonfirst/go-whosonfirst-cli"

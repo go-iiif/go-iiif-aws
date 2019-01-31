@@ -20,7 +20,7 @@ If you're reading this it means that the documentation is still being finalized.
 
 ### go-iiif-process-ecs
 
-Build a Docker container with an up-to-date copy of the [iiif-process](https://github.com/aaronland/go-iiif#iiif-process-1) tool bundled with custom IIIF config and (processing) instructions file. The easiest way to build this container is to use the `docker-process` Makefile target passing the paths to your custom IIIF config and instructions files.
+Build a Docker container with an up-to-date copy of the [iiif-process](https://github.com/go-iiif/go-iiif#iiif-process-1) tool bundled with custom IIIF config and (processing) instructions file. The easiest way to build this container is to use the `docker-process` Makefile target passing the paths to your custom IIIF config and instructions files.
 
 For example:
 
@@ -291,5 +291,5 @@ Required keys in a `go-whosonfirst-aws` DSN string for Lambda services are:
 
 ## See also
 
-* https://github.com/aaronland/go-iiif
+* https://github.com/go-iiif/go-iiif
 * https://github.com/awslabs/aws-lambda-container-image-converter/
