@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/aaronland/go-iiif-uri"
 	aws_events "github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	aws_ecs "github.com/aws/aws-sdk-go/service/ecs"
-	"github.com/aaronland/go-iiif-uri"
 	"github.com/whosonfirst/go-whosonfirst-aws/lambda"
 	"github.com/whosonfirst/go-whosonfirst-aws/session"
 	"log"
@@ -28,6 +28,7 @@ type ProcessTaskOptions struct {
 	Config         string
 	Instructions   string
 	URIs           []uri.URI
+	URIType	string
 }
 
 type ProcessTaskResponse struct {
@@ -83,15 +84,15 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 	}
 
 	/*
-	str_cmd := make([]string, len(cmd))
+		str_cmd := make([]string, len(cmd))
 
-	for i, s := range cmd {
-		str_cmd[i] = *s
-	}
+		for i, s := range cmd {
+			str_cmd[i] = *s
+		}
 
-	log.Println(strings.Join(str_cmd, " "))
+		log.Println(strings.Join(str_cmd, " "))
 	*/
-	
+
 	// at this point there's nothing IIIF specific about anything
 	// that follows - it's pretty much boilerplate AWS ECS invoking
 	// code
@@ -230,10 +231,7 @@ func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aw
 			s3_obj := s3_entity.Object
 			s3_key := s3_obj.Key
 
-			// HEY LOOK! PLEASE SUPPORT OTHER KINDS OF URIS
-			// ...BUT HOW? (20190130/thisisaaronland)
-
-			im, err := uri.NewIIIFURI(s3_key)
+			im, err := uri.NewURIWithType(s3_key, opts.URIType)
 
 			if err != nil {
 				return nil, err
