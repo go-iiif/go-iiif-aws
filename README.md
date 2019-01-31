@@ -61,7 +61,7 @@ make docker-process CONFIG=/path/to/your/config.json INSTRUCTIONS=/path/to/your/
 
 This will create a new Docker image called `go-iiif-process-ecs`.
 
-#### Repository
+#### Repositories
 
 Create a new ECS repository called `go-iiif-process-ecs`
 
