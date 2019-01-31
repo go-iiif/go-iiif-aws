@@ -5,7 +5,7 @@ import (
 	"flag"
 	"github.com/aaronland/go-iiif-aws/ecs"
 	aws_lambda "github.com/aws/aws-lambda-go/lambda"
-	"github.com/thisisaaronland/go-iiif/process"
+	"github.com/aaronland/go-iiif-uri"
 	"github.com/whosonfirst/go-whosonfirst-cli/flags"
 	"log"
 	"strings"
@@ -47,11 +47,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	uris := make([]process.URI, len(str_uris))
+	uris := make([]uri.URI, len(str_uris))
 
 	for i, u := range str_uris {
 
-		iiif_uri, err := process.NewIIIFURI(u)
+		iiif_uri, err := uri.NewIIIFURI(u)
 
 		if err != nil {
 			log.Fatal(err)

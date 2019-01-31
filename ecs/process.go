@@ -8,7 +8,7 @@ import (
 	aws_events "github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	aws_ecs "github.com/aws/aws-sdk-go/service/ecs"
-	"github.com/thisisaaronland/go-iiif/process"
+	"github.com/aaronland/go-iiif-uri"
 	"github.com/whosonfirst/go-whosonfirst-aws/lambda"
 	"github.com/whosonfirst/go-whosonfirst-aws/session"
 	"log"
@@ -27,12 +27,12 @@ type ProcessTaskOptions struct {
 	Subnets        []string
 	Config         string
 	Instructions   string
-	URIs           []process.URI
+	URIs           []uri.URI
 }
 
 type ProcessTaskResponse struct {
 	TaskId string
-	URIs   []process.URI
+	URIs   []uri.URI
 }
 
 func (t *ProcessTaskResponse) String() string {
@@ -222,7 +222,7 @@ func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aw
 
 	handler := func(ctx context.Context, ev aws_events.S3Event) (*ProcessTaskResponse, error) {
 
-		uris := make([]process.URI, 0)
+		uris := make([]uri.URI, 0)
 
 		for _, r := range ev.Records {
 
@@ -233,7 +233,7 @@ func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aw
 			// HEY LOOK! PLEASE SUPPORT OTHER KINDS OF URIS
 			// ...BUT HOW? (20190130/thisisaaronland)
 
-			im, err := process.NewIIIFURI(s3_key)
+			im, err := uri.NewIIIFURI(s3_key)
 
 			if err != nil {
 				return nil, err
