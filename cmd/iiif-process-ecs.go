@@ -109,12 +109,14 @@ func main() {
 
 	case "invoke":
 
-		_, err := ecs.InvokeLambdaHandlerFunc(opts, *lambda_dsn, *lambda_func, *lambda_type)
+		rsp, err := ecs.InvokeLambdaHandlerFunc(opts, *lambda_dsn, *lambda_func, *lambda_type)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
+		log.Println(rsp)
+		
 	case "task":
 
 		ctx, cancel := context.WithCancel(context.Background())
