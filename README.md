@@ -214,7 +214,9 @@ Then create a new Go Lambda function in AWS and upload the resulting `process-ta
 | `IIIF_PROCESS_MODE` | lambda |
 | `IIIF_PROCESS_SECURITY_GROUP` | sg-*** |
 | `IIIF_PROCESS_SUBNET` | subnet-***,subnet-***,subnet-*** |
-| `IIIF_PROCESS_TASK` | iiif-process:2 |
+| `IIIF_PROCESS_CLUSTER` | go-iiif-process-ecs |
+| `IIIF_PROCESS_CONTAINER` | go-iiif-process-ecs |
+| `IIIF_PROCESS_TASK` | go-iiif-process-ecs:1 |
 
 See the `IIIF_PROCESS_MODE=lambda` variable? That's important. Also, see the way we're passing options that can have multiple values (subnets, security groups, etc.) as comma-separated values? Yeah, that.
 
@@ -235,7 +237,7 @@ You'll need to make sure the role associated with your Lambda function has the f
                 "ecs:RunTask"
             ],
             "Resource": [
-                "arn:aws:ecs:us-west-2:{AWS_ACCOUNT_ID}:task-definition/{ECS_TASK}:*"
+                "arn:aws:ecs:{AWS_REGION}:{AWS_ACCOUNT_ID}:task-definition/{ECS_TASK}:*"
             ]
         },
         {
