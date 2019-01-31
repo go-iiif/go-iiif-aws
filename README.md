@@ -200,10 +200,6 @@ $> iiif-process-ecs -mode invoke \
 
 ### Running `iiif-process-ecs` as a Lambda function
 
-_If you're reading this building Lambda functions is currently broken. This has to do with the introduction of the go-iiif `process.URI` interface which means we're importing and then trying to compile the guts of the go-iiif package which means we're in `libvips` land which doesn't not cross-compile. The current thought is to move all the URL definitions in to a discrete `go-iiif-uri` package but that hasn't happened yet._
-
-This assumes you've already set up your ECS task, which is outside the scope of this documentation.
-
 First run the handy `lambda-process` target in the Makefile:
 
 ```
