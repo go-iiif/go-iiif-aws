@@ -200,6 +200,8 @@ $> iiif-process-ecs -mode invoke \
 
 ### Running `iiif-process-ecs` as a Lambda function
 
+For example, if you want to trigger your handy `go-iiif-process-ecs` task on images they are uploaded in to S3 you might add the following Lambda function as a "trigger" for `PUT` operations (in S3).
+
 First run the handy `lambda-process` target in the Makefile:
 
 ```
