@@ -151,6 +151,11 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 	// this appears to be how you capture the output of an ECS task?
 	// (20190124/thisisaaronland)
 
+	if len(rsp.Tasks) == 0 {
+		log.Println(rsp)
+		return nil, errors.New("run task returned no errors... but no tasks")
+	}
+	
 	task_id := rsp.Tasks[0].TaskArn
 
 	if opts.Wait {
