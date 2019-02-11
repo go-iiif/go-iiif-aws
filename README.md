@@ -12,10 +12,6 @@ make bin
 
 All of this package's dependencies are bundled with the code in the `vendor` directory.
 
-## Important
-
-If you're reading this it means that the documentation is still being finalized.
-
 ## Docker
 
 ### go-iiif-process-ecs
