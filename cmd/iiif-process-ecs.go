@@ -22,6 +22,9 @@ func main() {
 	var config = flag.String("config", "/etc/go-iiif/config.json", "The path your IIIF config (on/in your container).")
 	var instructions = flag.String("instructions", "/etc/go-iiif/instructions.json", "The path your IIIF processing instructions (on/in your container).")
 
+	var report = flag.Bool("report", false, "Store a process report (JSON) for each URI in the cache tree.")
+	var report_name = flag.String("report-name", "process.json", "The filename for process reports. Default is 'process.json' as in '${URI}/process.json'.")
+
 	var wait = flag.Bool("wait", false, "Wait for the task to complete.")
 
 	var mode = flag.String("mode", "task", "Valid modes are: lambda (run as a Lambda function), invoke (invoke this Lambda function), task (run this ECS task).")
@@ -95,6 +98,8 @@ func main() {
 		Subnets:        subnets,
 		SecurityGroups: security_groups,
 		Config:         *config,
+		Report:         *report,
+		ReportName:     *report_name,
 		Instructions:   *instructions,
 		URIs:           uris,
 		URIType:        *uri_type,

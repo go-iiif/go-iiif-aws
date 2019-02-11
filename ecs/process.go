@@ -26,6 +26,8 @@ type ProcessTaskOptions struct {
 	SecurityGroups []string
 	Subnets        []string
 	Config         string
+	Report         bool
+	ReportName     string
 	Instructions   string
 	URIs           []uri.URI
 	URIType        string
@@ -54,6 +56,12 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 		aws.String(opts.Config),
 		aws.String("-instructions"),
 		aws.String(opts.Instructions),
+	}
+
+	if opts.Report {
+		cmd = append(cmd, aws.String("-report"))
+		cmd = append(cmd, aws.String("-report-name"))
+		cmd = append(cmd, aws.String(opts.ReportName))
 	}
 
 	images := make([]string, 0)
@@ -155,7 +163,7 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 		log.Println(rsp)
 		return nil, errors.New("run task returned no errors... but no tasks")
 	}
-	
+
 	task_id := rsp.Tasks[0].TaskArn
 
 	if opts.Wait {
