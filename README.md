@@ -222,6 +222,13 @@ Then create a new Go Lambda function in AWS and upload the resulting `process-ta
 
 See the `IIIF_PROCESS_MODE=lambda` variable? That's important. Also, see the way we're passing options that can have multiple values (subnets, security groups, etc.) as comma-separated values? Yeah, that.
 
+You may also want to configure the following optional environment variables:
+
+| Environment variable | Value |
+| --- | --- |
+| `IIIF_PROCESS_REPORT` | true (or false) |
+| `IIIF_PROCESS_REPORT_NAME` | process.report (or a custom name) |
+
 You'll need to make sure the role associated with your Lambda function has the following policies:
 
 * `AWSLambdaExecute`
