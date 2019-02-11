@@ -226,8 +226,8 @@ You may also want to configure the following optional environment variables:
 
 | Environment variable | Value |
 | --- | --- |
-| `IIIF_PROCESS_REPORT` | true (or false) |
-| `IIIF_PROCESS_REPORT_NAME` | process.report (or a custom name) |
+| `IIIF_PROCESS_REPORT` | true |
+| `IIIF_PROCESS_REPORT_NAME` | process.json |
 
 You'll need to make sure the role associated with your Lambda function has the following policies:
 
