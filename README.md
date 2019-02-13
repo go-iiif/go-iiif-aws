@@ -295,4 +295,4 @@ Required keys in a `go-whosonfirst-aws` DSN string for Lambda services are:
 ## See also
 
 * https://github.com/go-iiif/go-iiif
-* https://github.com/awslabs/aws-lambda-container-image-converter/
+* https://millsfield.sfomuseum.org/blog/2019/02/12/iiif-aws/
