@@ -1,9 +1,7 @@
 FROM golang:1.12-alpine as builder
 
 ARG VIPS_VERSION=8.8.3
-
-# to do: update to use go-iiif-vips	
-ARG GO_IIIF_VERSION=2.0.3
+ARG GO_IIIF_VIPS_VERSION=0.0.1
 
 ENV VIPS_DIR=/vips
 ENV PKG_CONFIG_PATH=${VIPS_DIR}/lib/pkgconfig:$PKG_CONFIG_PATH
@@ -26,10 +24,9 @@ RUN apk update && apk upgrade && apk add \
                    --disable-dependency-tracking \
                    --enable-silent-rules \
     && make -s install-strip \
-    # to do: update to use go-iiif-vips
-    && wget -O- https://github.com/go-iiif/go-iiif/archive/v${GO_IIIF_VERSION}.tar.gz | tar xzC / \
-    && mv /go-iiif-${GO_IIIF_VERSION} /go-iiif \
-    && cd /go-iiif && make cli-tools
+    && wget -O- https://github.com/go-iiif/go-iiif-vips/archive/v${GO_IIIF_VIPS_VERSION}.tar.gz | tar xzC / \    
+    && mv /go-iiif-vips-${GO_IIIF_VIPS_VERSION} /go-iiif-vips \
+    && cd /go-iiif-vips && make cli-tools
 
 FROM alpine
 
@@ -40,7 +37,7 @@ RUN mkdir /etc/go-iiif
 RUN mkdir -p /usr/local/go-iiif
 
 COPY --from=builder /vips/lib/ /usr/local/lib
-COPY --from=builder /go-iiif/bin/iiif-process /bin/iiif-process
+COPY --from=builder /go-iiif-vips/bin/iiif-process /bin/iiif-process
 
 COPY ${GO_IIIF_CONFIG} /etc/go-iiif/config.json
 COPY ${GO_IIIF_INSTRUCTIONS} /etc/go-iiif/instructions.json
