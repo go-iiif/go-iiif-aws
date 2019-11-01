@@ -1,13 +1,13 @@
 FROM golang:alpine as builder
 
-ARG VIPS_VERSION=8.7.4
+ARG VIPS_VERSION=8.8.3
 
 ENV VIPS_DIR=/vips
 ENV PKG_CONFIG_PATH=${VIPS_DIR}/lib/pkgconfig:$PKG_CONFIG_PATH
 
 # where "latest" means >= go-iiif 1.2.0
 
-ARG GO_IIIF_VERSION=1.2.0
+ARG GO_IIIF_VERSION=2.0.0
 
 RUN apk update && apk upgrade && apk add \
     git \

@@ -34,8 +34,6 @@ Usage of /bin/iiif-process:
     	Store a process report (JSON) for each URI in the cache tree.
   -report-name string
     	The filename for process reports. Default is 'process.json' as in '${URI}/process.json'. (default "process.json")
-  -uri value
-    	One or more valid IIIF URIs.
 
 $> docker run go-iiif-process-ecs ls -al /etc/go-iiif/config.json
 -rw-r--r--    1 root     root          1033 Jan 28 20:03 /etc/go-iiif/config.json
@@ -145,8 +143,6 @@ Usage of ./bin/iiif-process-ecs:
     	One or more AWS subnets in which your task will run.
   -task string
     	The name of your AWS ECS task (inclusive of its version number),
-  -uri value
-    	One or more valid IIIF URIs.
   -wait
     	Wait for the task to complete.
 ```
@@ -168,7 +164,7 @@ $> iiif-process-ecs -mode task \
    -security-group {AWS_SECURITY_GROUP} \
    -cluster go-iiif-process-ecs -container go-iiif-process-ecs \
    -task go-iiif-process-ecs:1 \
-   -uri IMG_0084.JPG
+   'file:///IMG_0084.JPG'
 ```
 
 Assuming everything is configured properly you should see something like this:
@@ -190,8 +186,8 @@ $> iiif-process-ecs -mode invoke \
    -lambda-dsn 'region={AWS_REGION} credentials={AWS_CREDENTIALS}' \
    -lambda-func 'ProcessIIIF` \
    -lambda-type 'RequestResponse' \
-   -uri avocado.png \
-   -uri toast.jpg 
+   'file:///avocado.png' \
+   'file:///toast.jpg' 
 ```
 
 ### Running `iiif-process-ecs` as a Lambda function
