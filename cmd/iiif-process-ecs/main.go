@@ -39,11 +39,6 @@ func main() {
 	var security_groups flags.MultiString
 	flag.Var(&security_groups, "security-group", "One of more AWS security groups your task will assume.")
 
-	var str_uris flags.MultiString
-	flag.Var(&str_uris, "uri", "One or more valid IIIF URIs.")
-
-	var uri_type = flag.String("uri-type", "string", "A valid (go-iiif-uri) URI type. Valid options are: string, idsecret")
-
 	flag.Parse()
 
 	err := flags.SetFlagsFromEnvVars("IIIF_PROCESS")
@@ -52,17 +47,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	uris := make([]uri.URI, len(str_uris))
+	uris := make([]uri.URI, 0)
 
-	for i, u := range str_uris {
+	for _, str_uri := range flag.Args() {
 
-		iiif_uri, err := uri.NewURIWithType(u, *uri_type)
+		iiif_uri, err := uri.NewURI(str_uri)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		uris[i] = iiif_uri
+		uris = append(uris, iiif_uri)
 	}
 
 	if *mode == "lambda" {
@@ -102,7 +97,6 @@ func main() {
 		ReportName:     *report_name,
 		Instructions:   *instructions,
 		URIs:           uris,
-		URIType:        *uri_type,
 	}
 
 	switch *mode {

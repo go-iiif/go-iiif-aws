@@ -30,7 +30,6 @@ type ProcessTaskOptions struct {
 	ReportName     string
 	Instructions   string
 	URIs           []uri.URI
-	URIType        string
 }
 
 type ProcessTaskResponse struct {
@@ -68,7 +67,11 @@ func LaunchProcessTask(ctx context.Context, opts *ProcessTaskOptions) (*ProcessT
 
 	for _, im := range opts.URIs {
 
-		url := im.URL()
+		url, err := im.Target(nil)
+
+		if err != nil {
+			return nil, err
+		}
 
 		url_base := filepath.Base(url)
 		url_ext := filepath.Ext(url_base)
@@ -244,13 +247,17 @@ func LambdaHandlerFunc(opts *ProcessTaskOptions) func(ctx context.Context, ev aw
 			s3_obj := s3_entity.Object
 			s3_key := s3_obj.Key
 
-			im, err := uri.NewURIWithType(s3_key, opts.URIType)
+			im, err := uri.NewURI(s3_key)
 
 			if err != nil {
 				return nil, err
 			}
 
-			url := im.URL()
+			url, err := im.Target(nil)
+
+			if err != nil {
+				return nil, err
+			}
 
 			url_ext := filepath.Ext(url)
 			url_type := mime.TypeByExtension(url_ext)
