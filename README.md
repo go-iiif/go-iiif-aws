@@ -27,9 +27,19 @@ time passes...
 $> docker run go-iiif-process-ecs /bin/iiif-process -h
 Usage of /bin/iiif-process:
   -config string
-    	Path to a valid go-iiif config file.
+    	Path to a valid go-iiif config file. DEPRECATED - please use -config_source and -config name.
+  -config-name string
+    	The name of your go-iiif config file. (default "config.json")
+  -config-source string
+    	A valid Go Cloud bucket URI where your go-iiif config file is located.
   -instructions string
-    	Path to a valid go-iiif processing instructions file.
+    	Path to a valid go-iiif processing instructions file. DEPRECATED - please use -instructions-source and -instructions-name.
+  -instructions-name string
+    	The name of your go-iiif instructions file. (default "instructions.json")
+  -instructions-source string
+    	A valid Go Cloud bucket URI where your go-iiif instructions file is located.
+  -mode string
+    	Valid modes are: cli, lambda. (default "cli")
   -report
     	Store a process report (JSON) for each URI in the cache tree.
   -report-name string
@@ -37,6 +47,17 @@ Usage of /bin/iiif-process:
 
 $> docker run go-iiif-process-ecs ls -al /etc/go-iiif/config.json
 -rw-r--r--    1 root     root          1033 Jan 28 20:03 /etc/go-iiif/config.json
+```
+
+For example:
+
+```
+$> docker run -v /usr/local/go-iiif-vips/docker:/usr/local/go-iiif go-iiif-process-ecs \
+       /bin/iiif-process -config-source file:///etc/go-iiif -instructions-source file:///etc/go-iiif \
+       'file:///zuber.jpg?target=zuber'
+{"zuber.jpg":{"dimensions":{"b":[1534,1536],"d":[320,320],"o":[3597,3600]},"palette":[{"name":"#af5c48","hex":"#af5c48","reference":"vibrant"},{"name":"#e3cfaf","hex":"#e3cfaf",\
+"reference":"vibrant"},{"name":"#9e8a65","hex":"#9e8a65","reference":"vibrant"},{"name":"#ccc0aa","hex":"#ccc0aa","reference":"vibrant"},{"name":"#4e4035","hex":"#4e4035","refer\
+ence":"vibrant"}],"uris":{"b":"file:///zuber/full/!2048,1536/0/color.png","d":"file:///zuber/-1,-1,320,320/full/0/dither.jpg","o":"file:///zuber/full/full/-1/color.jpg"}}}
 ```
 
 ### ECS
@@ -291,4 +312,5 @@ Required keys in a `go-whosonfirst-aws` DSN string for Lambda services are:
 ## See also
 
 * https://github.com/go-iiif/go-iiif
+* https://github.com/go-iiif/go-iiif-vips
 * https://millsfield.sfomuseum.org/blog/2019/02/12/iiif-aws/
