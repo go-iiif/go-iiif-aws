@@ -1,13 +1,10 @@
-FROM golang:alpine as builder
+FROM golang:1.12-alpine as builder
 
 ARG VIPS_VERSION=8.8.3
+ARG GO_IIIF_VERSION=2.0.3
 
 ENV VIPS_DIR=/vips
 ENV PKG_CONFIG_PATH=${VIPS_DIR}/lib/pkgconfig:$PKG_CONFIG_PATH
-
-# where "latest" means >= go-iiif 1.2.0
-
-ARG GO_IIIF_VERSION=2.0.0
 
 RUN apk update && apk upgrade && apk add \
     git \
@@ -27,9 +24,9 @@ RUN apk update && apk upgrade && apk add \
                    --disable-dependency-tracking \
                    --enable-silent-rules \
     && make -s install-strip \
-    && wget -O- https://github.com/aaronland/go-iiif/archive/${GO_IIIF_VERSION}.tar.gz | tar xzC / \
+    && wget -O- https://github.com/go-iiif/go-iiif/archive/v${GO_IIIF_VERSION}.tar.gz | tar xzC / \
     && mv /go-iiif-${GO_IIIF_VERSION} /go-iiif \
-    && cd /go-iiif && make bin
+    && cd /go-iiif && make cli-tools
 
 # && git clone https://github.com/aaronland/go-iiif.git /go-iiif && cd /go-iiif && git fetch -a && git checkout -b transform origin/transform \
 # && make bin
